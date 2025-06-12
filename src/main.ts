@@ -5,6 +5,7 @@ import { env } from './env';
 import { AllExceptionsFilter } from './presentation/handler/all-exceptions-filter';
 import { AuthGuard } from './presentation/auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,12 +15,32 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Remove campos não definidos no DTO
-      forbidNonWhitelisted: true, // Lança erro para campos não permitidos
-      transform: true, // Transforma os tipos automaticamente (ex.: string para number)
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
+  const config = new DocumentBuilder()
+    .setTitle('QuickTest API')
+    .setDescription('API para o sistema de testes rápidos')
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Entre com o token JWT',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
   await app.listen(env.PORT, '0.0.0.0');
   console.log('Server is running🚀!');
+  console.log(`Swagger documentation available at: http://localhost:${env.PORT}/api/docs`);
 }
 bootstrap();

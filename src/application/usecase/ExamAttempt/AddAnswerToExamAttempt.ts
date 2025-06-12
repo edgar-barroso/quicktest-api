@@ -8,7 +8,7 @@ import { ExamRepository } from '@/domain/repository/ExamRepository';
 import { QuestionRepository } from '@/domain/repository/QuestionRepository';
 import { UserRepository } from '@/domain/repository/UserRepository';
 
-export interface AddAnswerInExamAttemptInput {
+export interface AddAnswerToExamAttemptInput {
   id: string;
   questionId: string;
   choiceId: string;
@@ -16,13 +16,14 @@ export interface AddAnswerInExamAttemptInput {
   now?: Date;
 }
 
-export interface AddAnswerInExamAttemptOutput {
+export interface AddAnswerToExamAttemptOutput {
   id: string;
   questionId: string;
   choiceId: string;
+  message: string;
 }
 
-export class AddAnswerInExamAttempt {
+export class AddAnswerToExamAttempt {
   constructor(
     private readonly examAttemptRepository: ExamAttemptRepository,
     private readonly userRepository: UserRepository,
@@ -36,7 +37,7 @@ export class AddAnswerInExamAttempt {
     choiceId,
     userId,
     now
-  }: AddAnswerInExamAttemptInput): Promise<AddAnswerInExamAttemptOutput> {
+  }: AddAnswerToExamAttemptInput): Promise<AddAnswerToExamAttemptOutput> {
     const examAttempt = await this.examAttemptRepository.findById(id);
     if (!examAttempt) {
       throw new ExamAttemptNotFoundError();
@@ -76,6 +77,7 @@ export class AddAnswerInExamAttempt {
       id: examAttempt.getId(),
       questionId,
       choiceId,
+      message: 'Resposta adicionada com sucesso'
     };
   }
 }

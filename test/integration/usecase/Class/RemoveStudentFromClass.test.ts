@@ -48,7 +48,7 @@ describe("RemoveStudentFromClass", () => {
     const output = await sut.execute(input);
 
     expect(output).toEqual({
-      classId: classEntity.getId(),
+      id: classEntity.getId(),
     });
 
     const updatedClass = await classRepository.findById(classEntity.getId());

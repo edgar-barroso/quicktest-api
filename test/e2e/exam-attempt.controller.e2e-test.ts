@@ -10,7 +10,7 @@ import * as request from 'supertest';
 import { BcryptHashStrategy } from '@/domain/service/hashStrategy/BcryptHashStrategy';
 import { env } from '@/env';
 import { Question as QuestionPrisma } from '@prisma/client';
-import { clearDataBase } from './../utils';
+import { clearDataBase } from '../utils';
 
 let app: INestApplication;
 let token: string;
@@ -138,6 +138,21 @@ describe('ExamAttemptController (e2e)', () => {
 
     expect(response.body).toHaveProperty('id', examAttemptId);
     expect(response.body).toHaveProperty('examId', examId);
+  });
+
+  it('/POST exam-attempt/:id/answer - Deve adicionar uma resposta à tentativa de exame', async () => {
+    const input = { questionId: question.id, choiceId: "choice-1" };
+
+    const response = await request(app.getHttpServer())
+      .post(`/exam-attempt/${examAttemptId}/answer`)
+      .set('Authorization', `Bearer ${studentToken}`)
+      .send(input)
+      .expect(201);
+
+    expect(response.body).toHaveProperty('id', examAttemptId);
+    expect(response.body).toHaveProperty('questionId', question.id);
+    expect(response.body).toHaveProperty('choiceId', "choice-1");
+    expect(response.body).toHaveProperty('message', 'Resposta adicionada com sucesso');
   });
 
   it('/POST exam-attempt/:id/grade - Deve avaliar uma tentativa de exame', async () => {

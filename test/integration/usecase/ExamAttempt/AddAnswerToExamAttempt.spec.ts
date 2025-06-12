@@ -1,7 +1,4 @@
-import {
-  AddAnswerInExamAttempt,
-  AddAnswerInExamAttemptInput,
-} from '@/application/usecase/ExamAttempt/AddAnswerInExamAttempt';
+
 import { ExamAttemptRepository } from '@/domain/repository/ExamAttemptRepository';
 import { UserRepository } from '@/domain/repository/UserRepository';
 import { QuestionRepository } from '@/domain/repository/QuestionRepository';
@@ -24,8 +21,9 @@ import {
 import { ExamRepository } from '@/domain/repository/ExamRepository';
 import { InMemoryExamRepository } from '@/infra/repository/InMemory/InMemoryExamRepository';
 import { Exam } from '@/domain/entity/Exam';
+import { AddAnswerToExamAttempt, AddAnswerToExamAttemptInput } from '@/application/usecase/ExamAttempt/AddAnswerToExamAttempt';
 
-let sut: AddAnswerInExamAttempt;
+let sut: AddAnswerToExamAttempt;
 let examAttemptRepository: ExamAttemptRepository;
 let userRepository: UserRepository;
 let questionRepository: QuestionRepository;
@@ -42,7 +40,7 @@ beforeEach(async () => {
   userRepository = new InMemoryUserRepository();
   questionRepository = new InMemoryQuestionRepository();
   examRepository = new InMemoryExamRepository();
-  sut = new AddAnswerInExamAttempt(
+  sut = new AddAnswerToExamAttempt(
     examAttemptRepository,
     userRepository,
     questionRepository,
@@ -83,9 +81,9 @@ beforeEach(async () => {
   await examAttemptRepository.create(examAttempt);
 });
 
-describe('AddAnswerInExamAttempt', () => {
+describe('AddAnswerToExamAttempt', () => {
   test('Deve adicionar uma resposta válida a uma tentativa de exame', async () => {
-    const input: AddAnswerInExamAttemptInput = {
+    const input: AddAnswerToExamAttemptInput = {
       id: examAttempt.getId(),
       questionId: question.getId(),
       choiceId: question.getChoices()[0].getId(),
@@ -112,7 +110,7 @@ describe('AddAnswerInExamAttempt', () => {
   });
 
   test('Deve lançar erro ao tentar adicionar uma resposta a uma tentativa inexistente', async () => {
-    const input: AddAnswerInExamAttemptInput = {
+    const input: AddAnswerToExamAttemptInput = {
       id: 'non-existent-attempt-id',
       questionId: question.getId(),
       choiceId: question.getChoices()[0].getId(),
@@ -123,7 +121,7 @@ describe('AddAnswerInExamAttempt', () => {
   });
 
   test('Deve lançar erro ao tentar adicionar uma resposta com um usuário inexistente', async () => {
-    const input: AddAnswerInExamAttemptInput = {
+    const input: AddAnswerToExamAttemptInput = {
       id: examAttempt.getId(),
       questionId: question.getId(),
       choiceId: question.getChoices()[0].getId(),
@@ -134,7 +132,7 @@ describe('AddAnswerInExamAttempt', () => {
   });
 
   test('Deve lançar erro ao tentar adicionar uma resposta sem autorização', async () => {
-    const input: AddAnswerInExamAttemptInput = {
+    const input: AddAnswerToExamAttemptInput = {
       id: examAttempt.getId(),
       questionId: question.getId(),
       choiceId: question.getChoices()[0].getId(),
@@ -145,7 +143,7 @@ describe('AddAnswerInExamAttempt', () => {
   });
 
   test('Deve lançar erro ao tentar adicionar uma resposta a uma questão inexistente', async () => {
-    const input: AddAnswerInExamAttemptInput = {
+    const input: AddAnswerToExamAttemptInput = {
       id: examAttempt.getId(),
       questionId: 'non-existent-question-id',
       choiceId: 'non-existent-choice-id',
@@ -157,7 +155,7 @@ describe('AddAnswerInExamAttempt', () => {
 
   test('Deve lançar erro ao tentar adicionar uma resposta fora do período permitido', async () => {
 
-    const input: AddAnswerInExamAttemptInput = {
+    const input: AddAnswerToExamAttemptInput = {
       id: examAttempt.getId(),
       questionId: question.getId(),
       choiceId: question.getChoices()[0].getId(),

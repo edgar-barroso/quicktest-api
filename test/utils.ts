@@ -133,10 +133,18 @@ import { prisma } from '@/lib/prisma';
   };
 
   export const clearDataBase = async () => {
-    await prisma.examAttempt.deleteMany();
+    // Primeiro excluir answers, pois elas têm referências para examAttempt, question e choice
     await prisma.answer.deleteMany();
+    // Depois excluir examAttempt 
+    await prisma.examAttempt.deleteMany();
+    // Excluir exams pois têm relação com class
     await prisma.exam.deleteMany();
+    // Excluir choices, pois têm relação com question
+    await prisma.choice.deleteMany();
+    // Excluir questions
     await prisma.question.deleteMany();
+    // Excluir classes
     await prisma.class.deleteMany();
+    // Por último excluir users
     await prisma.user.deleteMany();
   }
